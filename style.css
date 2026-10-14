@@ -45,3 +45,89 @@ body {
   padding: 16px;
   align-items: start;
 }
+
+.map-section { 
+    background: var(--white); 
+    border-radius: 8px; 
+    border-top: 5px solid var(--green); 
+    padding: 12px; 
+    min-width: 0; 
+}
+
+.viewport {
+  position: relative;
+  height: 520px;
+  overflow: hidden;
+  background: var(--light);
+  border-radius: 6px;
+  cursor: grab;
+  touch-action: none;
+  user-select: none;
+}
+
+.world {
+  position: absolute;
+  top: 0; left: 0;
+  transform-origin: 0 0;
+  padding: 24px;
+}
+
+.stage {
+  background: var(--house);
+  color: var(--tea);
+  text-align: center;
+  font-weight: 700;
+  letter-spacing: .3em;
+  padding: 14px;
+  border-radius: 4px 4px 40px 40px;
+  margin: 0 40px 28px;
+}
+
+.category-label {
+  margin: 14px 0 6px 40px;
+  font-size: .8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+}
+.row { 
+    display: flex; 
+    align-items: center; 
+    gap: 6px; 
+    margin-bottom: 6px; 
+}
+.row-label { 
+    width: 28px; 
+    text-align: center; 
+    font-weight: 700; 
+    font-size: .85rem; 
+}
+.aisle { 
+    width: 24px; 
+    flex: none; 
+}
+
+.seat {
+  width: 28px; height: 28px;
+  flex: none;
+  padding: 0;
+  border: 2px solid transparent;
+  border-radius: 6px 6px 3px 3px;
+  font-size: .62rem;
+  font-weight: 700;
+  color: var(--white);
+  cursor: pointer;
+}
+.seat.vip { 
+    background: var(--vip); 
+}
+.seat.premium { 
+    background: var(--premium); 
+}
+.seat.standard { 
+    background: var(--standard); 
+    color: var(--house); 
+}
+.seat:hover:not(.unavailable) { 
+    filter: brightness(1.2); 
+}
