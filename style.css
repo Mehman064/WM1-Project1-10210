@@ -131,3 +131,31 @@ body {
 .seat:hover:not(.unavailable) { 
     filter: brightness(1.2); 
 }
+
+.legend {
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 16px;
+    padding: 0;
+    margin: 12px 0 0;
+    font-size: 0.85rem;
+}
+
+.legend li {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.legend .seat {
+    width: 18px;
+    height: 18px;
+    cursor: default;
+    pointer-events: none;
+    font-size: 0;
+}
+
+.legend .seat::after {
+    font-size: 0.7rem !important;
+}
