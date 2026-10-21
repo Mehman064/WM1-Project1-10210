@@ -13,6 +13,22 @@
   </header>
 
   <main class="layout">
+    <aside class="panel" aria-labelledby="inspect-title">
+      <h2 id="inspect-title">Seat Inspection</h2>
+      <div id="inspect-empty" class="empty">Click a seat on the map to see its details.</div>
+      <div id="inspect-details" hidden>
+        <dl class="details">
+          <dt>Seat</dt><dd id="d-seat"></dd>
+          <dt>Category</dt><dd id="d-category"></dd>
+          <dt>Row</dt><dd id="d-row"></dd>
+          <dt>Number</dt><dd id="d-number"></dd>
+          <dt>Status</dt><dd id="d-status"></dd>
+          <dt>Price</dt><dd id="d-price" class="price"></dd>
+        </dl>
+        <button id="add-btn" class="btn primary" type="button">ADD TO CART</button>
+        <p id="inspect-msg" class="msg" role="status"></p>
+      </div>
+    </aside>
     <section class="map-section" aria-label="Venue map">
       <div id="viewport" class="viewport">
         <div id="world" class="world"></div>

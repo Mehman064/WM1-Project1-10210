@@ -96,6 +96,21 @@ function renderLegend() {
     items.map(([c, t]) => `<li><span class="${c}"></span>${t}</li>`).join("");
 }
 
+let inspectedId = null;
+let cart = [];
+
+function refreshSeat(id) {
+  const el = seatEls.get(id);
+  const s = seats.get(id);
+  if (!el) return;
+  const inCart = cart.includes(id);
+  el.classList.toggle("unavailable", s.unavailable);
+  el.classList.toggle("inspected", inspectedId === id);
+}
+
+function refreshAllSeats() { seats.forEach((_, id) => refreshSeat(id)); }
+
 buildSeatData();
 renderVenue();
 renderLegend();
+refreshAllSeats();
