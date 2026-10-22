@@ -110,7 +110,45 @@ function refreshSeat(id) {
 
 function refreshAllSeats() { seats.forEach((_, id) => refreshSeat(id)); }
 
+const $ = id => document.getElementById(id);
+const addBtn = $("add-btn");
+
+function inspect(id) {
+  const prev = inspectedId;
+  inspectedId = id;
+  if (prev) refreshSeat(prev);
+  refreshSeat(id);
+  renderInspection();
+}
+
+function renderInspection() {
+  $("inspect-msg").textContent = "";
+  if (!inspectedId) {
+    $("inspect-empty").hidden = false;
+    $("inspect-details").hidden = true;
+    return;
+  }
+  const s = seats.get(inspectedId);
+  const inCart = cart.includes(s.id);
+  $("inspect-empty").hidden = true;
+  $("inspect-details").hidden = false;
+  $("d-seat").textContent = s.id;
+  $("d-category").textContent = CATEGORIES[s.category].name;
+  $("d-row").textContent = s.row;
+  $("d-number").textContent = s.number;
+  $("d-status").textContent = s.unavailable ? "Unavailable" : inCart ? "In cart" : "Available";
+  $("d-price").textContent = "$" + s.price;
+  addBtn.disabled = s.unavailable || inCart;
+  addBtn.textContent = s.unavailable ? "UNAVAILABLE" : inCart ? "ALREADY IN CART" : "ADD TO CART";
+}
+
+world.addEventListener("click", e => {
+  const btn = e.target.closest(".seat");
+  if (btn) inspect(btn.dataset.id);
+});
+
 buildSeatData();
 renderVenue();
 renderLegend();
 refreshAllSeats();
+renderInspection();
