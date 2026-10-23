@@ -105,6 +105,7 @@ function refreshSeat(id) {
   if (!el) return;
   const inCart = cart.includes(id);
   el.classList.toggle("unavailable", s.unavailable);
+  el.classList.toggle("incart", inCart);
   el.classList.toggle("inspected", inspectedId === id);
 }
 
@@ -142,6 +143,57 @@ function renderInspection() {
   addBtn.textContent = s.unavailable ? "UNAVAILABLE" : inCart ? "ALREADY IN CART" : "ADD TO CART";
 }
 
+function addToCart(id) {
+  const s = seats.get(id);
+  if (!s || s.unavailable || cart.includes(id)) return false;
+  cart.push(id);
+  refreshSeat(id);
+  renderCart();
+  renderInspection();
+  $("inspect-msg").textContent = `Seat ${id} added to cart.`;
+  return true;
+}
+
+function removeFromCart(id) {
+  const i = cart.indexOf(id);
+  if (i === -1) return;
+  cart.splice(i, 1);
+  refreshSeat(id);
+  renderCart();
+  if (inspectedId === id) renderInspection();
+}
+
+function renderCart() {
+  const list = $("cart-list");
+  list.innerHTML = "";
+  let total = 0;
+  cart.forEach(id => {
+    const s = seats.get(id);
+    total += s.price;
+    const li = document.createElement("li");
+    li.innerHTML = `<div class="info"><strong>Seat ${s.id}</strong><small>${CATEGORIES[s.category].name} · Row ${s.row}</small></div>
+      <div class="right"><span>$${s.price}</span><button type="button" class="btn" data-remove="${s.id}" aria-label="Remove seat ${s.id}">Remove</button></div>`;
+    list.appendChild(li);
+  });
+  $("cart-empty").hidden = cart.length > 0;
+  $("cart-count").textContent = cart.length;
+  $("cart-total").textContent = "$" + total;
+  $("clear-btn").disabled = cart.length === 0;
+}
+
+addBtn.addEventListener("click", () => { if (inspectedId) addToCart(inspectedId); });
+$("cart-list").addEventListener("click", e => {
+  const b = e.target.closest("[data-remove]");
+  if (b) removeFromCart(b.dataset.remove);
+});
+$("clear-btn").addEventListener("click", () => {
+  const ids = [...cart];
+  cart = [];
+  ids.forEach(refreshSeat);
+  renderCart();
+  renderInspection();
+});
+
 world.addEventListener("click", e => {
   const btn = e.target.closest(".seat");
   if (btn) inspect(btn.dataset.id);
@@ -152,3 +204,4 @@ renderVenue();
 renderLegend();
 refreshAllSeats();
 renderInspection();
+renderCart();

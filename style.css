@@ -246,3 +246,65 @@ body {
     color: #8a9692;
     cursor: not-allowed;
 }
+
+.seat.incart {
+    background: var(--tea);
+    color: var(--house);
+    border: 2px solid var(--green);
+}
+
+.seat.incart::after {
+    content: "✓";
+}
+
+.seat.incart {
+    font-size: 0;
+}
+
+.seat.incart::after {
+    font-size: 0.9rem;
+}
+
+.cart-list {
+    list-style: none;
+    margin: 0 0 12px;
+    padding: 0;
+    max-height: 380px;
+    overflow-y: auto;
+}
+
+.cart-list li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+    padding: 10px;
+    margin-bottom: 8px;
+    background: var(--light);
+    border-radius: 6px;
+}
+
+.cart-list .info small {
+    display: block;
+    color: #3d5a52;
+}
+
+.cart-list .right {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 700;
+}
+
+.cart-list .btn {
+    padding: 4px 8px;
+}
+
+.total-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 12px 0;
+    border-top: 2px solid var(--light);
+    margin-bottom: 8px;
+    font-size: 1.05rem;
+}
