@@ -1,3 +1,7 @@
+"use strict";
+
+const STORAGE_KEY = "grandHallCart_v1";
+
 const CATEGORIES = {
   vip:      { name: "VIP",      price: 120 },
   premium:  { name: "Premium",  price: 80 },
@@ -34,6 +38,22 @@ function buildSeatData() {
       rowIndex++;
     });
   });
+}
+
+let cart = [];
+let inspectedId = null;
+
+function loadCart() {
+  try {
+    const raw = JSON.parse(localStorage.getItem(STORAGE_KEY));
+    if (Array.isArray(raw)) {
+      cart = [...new Set(raw)].filter(id => seats.has(id) && !seats.get(id).unavailable);
+    }
+  } catch (e) { cart = []; }
+}
+
+function saveCart() {
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(cart)); } catch (e) { }
 }
 
 const world = document.getElementById("world");
@@ -96,9 +116,6 @@ function renderLegend() {
     items.map(([c, t]) => `<li><span class="${c}"></span>${t}</li>`).join("");
 }
 
-let inspectedId = null;
-let cart = [];
-
 function refreshSeat(id) {
   const el = seatEls.get(id);
   const s = seats.get(id);
@@ -147,6 +164,7 @@ function addToCart(id) {
   const s = seats.get(id);
   if (!s || s.unavailable || cart.includes(id)) return false;
   cart.push(id);
+  saveCart();
   refreshSeat(id);
   renderCart();
   renderInspection();
@@ -158,6 +176,7 @@ function removeFromCart(id) {
   const i = cart.indexOf(id);
   if (i === -1) return;
   cart.splice(i, 1);
+  saveCart();
   refreshSeat(id);
   renderCart();
   if (inspectedId === id) renderInspection();
@@ -181,27 +200,31 @@ function renderCart() {
   $("clear-btn").disabled = cart.length === 0;
 }
 
-addBtn.addEventListener("click", () => { if (inspectedId) addToCart(inspectedId); });
-$("cart-list").addEventListener("click", e => {
-  const b = e.target.closest("[data-remove]");
-  if (b) removeFromCart(b.dataset.remove);
-});
-$("clear-btn").addEventListener("click", () => {
-  const ids = [...cart];
-  cart = [];
-  ids.forEach(refreshSeat);
-  renderCart();
-  renderInspection();
-});
-
 world.addEventListener("click", e => {
   const btn = e.target.closest(".seat");
   if (btn) inspect(btn.dataset.id);
 });
 
+addBtn.addEventListener("click", () => { if (inspectedId) addToCart(inspectedId); });
+
+$("cart-list").addEventListener("click", e => {
+  const b = e.target.closest("[data-remove]");
+  if (b) removeFromCart(b.dataset.remove);
+});
+
+$("clear-btn").addEventListener("click", () => {
+  const ids = [...cart];
+  cart = [];
+  saveCart();
+  ids.forEach(refreshSeat);
+  renderCart();
+  renderInspection();
+});
+
 buildSeatData();
+loadCart();
 renderVenue();
 renderLegend();
 refreshAllSeats();
-renderInspection();
 renderCart();
+renderInspection();
