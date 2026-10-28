@@ -29,12 +29,23 @@
         <p id="inspect-msg" class="msg" role="status"></p>
       </div>
     </aside>
+
     <section class="map-section" aria-label="Venue map">
+      <div class="controls" role="group" aria-label="Map controls">
+        <button type="button" class="btn" id="zoom-in" aria-label="Zoom in">Zoom In +</button>
+        <button type="button" class="btn" id="zoom-out" aria-label="Zoom out">Zoom Out &minus;</button>
+        <button type="button" class="btn" id="move-up" aria-label="Move up">&uarr; Up</button>
+        <button type="button" class="btn" id="move-down" aria-label="Move down">&darr; Down</button>
+        <button type="button" class="btn" id="move-left" aria-label="Move left">&larr; Left</button>
+        <button type="button" class="btn" id="move-right" aria-label="Move right">&rarr; Right</button>
+        <button type="button" class="btn" id="reset-view" aria-label="Reset and center view">Reset / Center</button>
+      </div>
       <div id="viewport" class="viewport">
         <div id="world" class="world"></div>
       </div>
       <ul class="legend" id="legend" aria-label="Legend"></ul>
     </section>
+
     <aside class="panel" aria-labelledby="cart-title">
       <h2 id="cart-title">Your Cart</h2>
       <ul id="cart-list" class="cart-list"></ul>

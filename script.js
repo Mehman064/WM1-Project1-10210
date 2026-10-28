@@ -221,6 +221,56 @@ $("clear-btn").addEventListener("click", () => {
   renderInspection();
 });
 
+const MIN_SCALE = 0.4, MAX_SCALE = 2.5, STEP = 60, ZOOM_FACTOR = 1.2;
+let view = { x: 0, y: 0, scale: 1 };
+
+function worldSize() { return { w: world.offsetWidth, h: world.offsetHeight }; }
+
+function clampView() {
+  const vw = viewport.clientWidth, vh = viewport.clientHeight;
+  const { w, h } = worldSize();
+  view.scale = Math.min(MAX_SCALE, Math.max(MIN_SCALE, view.scale));
+  const sw = w * view.scale, sh = h * view.scale;
+  const margin = 80;
+  view.x = sw <= vw ? (vw - sw) / 2 : Math.min(margin, Math.max(vw - sw - margin, view.x));
+  view.y = sh <= vh ? (vh - sh) / 2 : Math.min(margin, Math.max(vh - sh - margin, view.y));
+}
+
+function applyView() {
+  clampView();
+  world.style.transform = `translate(${view.x}px, ${view.y}px) scale(${view.scale})`;
+}
+
+function resetView() {
+  const { w, h } = worldSize();
+  const fit = Math.min(viewport.clientWidth / w, viewport.clientHeight / h, 1);
+  view.scale = Math.max(MIN_SCALE, fit);
+  view.x = (viewport.clientWidth - w * view.scale) / 2;
+  view.y = (viewport.clientHeight - h * view.scale) / 2;
+  applyView();
+}
+
+function zoomAt(factor, cx, cy) {
+  const old = view.scale;
+  const next = Math.min(MAX_SCALE, Math.max(MIN_SCALE, old * factor));
+  if (next === old) return;
+  view.x = cx - (cx - view.x) * (next / old);
+  view.y = cy - (cy - view.y) * (next / old);
+  view.scale = next;
+  applyView();
+}
+
+function zoomCenter(factor) { zoomAt(factor, viewport.clientWidth / 2, viewport.clientHeight / 2); }
+function move(dx, dy) { view.x += dx; view.y += dy; applyView(); }
+
+$("zoom-in").addEventListener("click", () => zoomCenter(ZOOM_FACTOR));
+$("zoom-out").addEventListener("click", () => zoomCenter(1 / ZOOM_FACTOR));
+$("move-up").addEventListener("click", () => move(0, STEP));   
+$("move-down").addEventListener("click", () => move(0, -STEP));
+$("move-left").addEventListener("click", () => move(STEP, 0));
+$("move-right").addEventListener("click", () => move(-STEP, 0));
+$("reset-view").addEventListener("click", resetView);
+
 buildSeatData();
 loadCart();
 renderVenue();
@@ -228,3 +278,4 @@ renderLegend();
 refreshAllSeats();
 renderCart();
 renderInspection();
+resetView();

@@ -308,3 +308,10 @@ body {
     margin-bottom: 8px;
     font-size: 1.05rem;
 }
+
+.controls { 
+    display: flex; 
+    flex-wrap: wrap; 
+    gap: 6px; 
+    margin-bottom: 10px;
+}
