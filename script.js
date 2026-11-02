@@ -271,6 +271,8 @@ $("move-left").addEventListener("click", () => move(STEP, 0));
 $("move-right").addEventListener("click", () => move(-STEP, 0));
 $("reset-view").addEventListener("click", resetView);
 
+window.addEventListener("resize", applyView);
+
 buildSeatData();
 loadCart();
 renderVenue();
