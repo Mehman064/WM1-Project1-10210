@@ -124,6 +124,9 @@ function refreshSeat(id) {
   el.classList.toggle("unavailable", s.unavailable);
   el.classList.toggle("incart", inCart);
   el.classList.toggle("inspected", inspectedId === id);
+  el.disabled = false;
+  el.setAttribute("aria-pressed", inspectedId === id ? "true" : "false");
+  el.setAttribute("aria-disabled", s.unavailable ? "true" : "false");
 }
 
 function refreshAllSeats() { seats.forEach((_, id) => refreshSeat(id)); }
