@@ -203,27 +203,6 @@ function renderCart() {
   $("clear-btn").disabled = cart.length === 0;
 }
 
-world.addEventListener("click", e => {
-  const btn = e.target.closest(".seat");
-  if (btn) inspect(btn.dataset.id);
-});
-
-addBtn.addEventListener("click", () => { if (inspectedId) addToCart(inspectedId); });
-
-$("cart-list").addEventListener("click", e => {
-  const b = e.target.closest("[data-remove]");
-  if (b) removeFromCart(b.dataset.remove);
-});
-
-$("clear-btn").addEventListener("click", () => {
-  const ids = [...cart];
-  cart = [];
-  saveCart();
-  ids.forEach(refreshSeat);
-  renderCart();
-  renderInspection();
-});
-
 const MIN_SCALE = 0.4, MAX_SCALE = 2.5, STEP = 60, ZOOM_FACTOR = 1.2;
 let view = { x: 0, y: 0, scale: 1 };
 
@@ -265,6 +244,57 @@ function zoomAt(factor, cx, cy) {
 
 function zoomCenter(factor) { zoomAt(factor, viewport.clientWidth / 2, viewport.clientHeight / 2); }
 function move(dx, dy) { view.x += dx; view.y += dy; applyView(); }
+
+viewport.addEventListener("wheel", e => {
+  e.preventDefault();
+  const r = viewport.getBoundingClientRect();
+  zoomAt(e.deltaY < 0 ? ZOOM_FACTOR : 1 / ZOOM_FACTOR, e.clientX - r.left, e.clientY - r.top);
+}, { passive: false });
+
+let drag = null, justDragged = false;
+viewport.addEventListener("pointerdown", e => {
+  if (e.button !== 0) return;
+  drag = { id: e.pointerId, sx: e.clientX, sy: e.clientY, ox: view.x, oy: view.y, active: false };
+});
+viewport.addEventListener("pointermove", e => {
+  if (!drag || e.pointerId !== drag.id) return;
+  const dx = e.clientX - drag.sx, dy = e.clientY - drag.sy;
+  if (!drag.active && Math.hypot(dx, dy) > 5) {
+    drag.active = true;
+    viewport.classList.add("dragging");
+    viewport.setPointerCapture(e.pointerId);
+  }
+  if (drag.active) { view.x = drag.ox + dx; view.y = drag.oy + dy; applyView(); }
+});
+function endDrag(e) {
+  if (!drag || e.pointerId !== drag.id) return;
+  if (drag.active) { justDragged = true; setTimeout(() => (justDragged = false), 0); }
+  viewport.classList.remove("dragging");
+  drag = null;
+}
+viewport.addEventListener("pointerup", endDrag);
+viewport.addEventListener("pointercancel", endDrag);
+
+world.addEventListener("click", e => {
+  if (justDragged) return;
+  const btn = e.target.closest(".seat");
+  if (btn) inspect(btn.dataset.id);
+});
+viewport.addEventListener("click", e => { if (justDragged) { e.stopPropagation(); e.preventDefault(); } }, true);
+
+addBtn.addEventListener("click", () => { if (inspectedId) addToCart(inspectedId); });
+$("cart-list").addEventListener("click", e => {
+  const b = e.target.closest("[data-remove]");
+  if (b) removeFromCart(b.dataset.remove);
+});
+$("clear-btn").addEventListener("click", () => {
+  const ids = [...cart];
+  cart = [];
+  saveCart();
+  ids.forEach(refreshSeat);
+  renderCart();
+  renderInspection();
+});
 
 $("zoom-in").addEventListener("click", () => zoomCenter(ZOOM_FACTOR));
 $("zoom-out").addEventListener("click", () => zoomCenter(1 / ZOOM_FACTOR));
